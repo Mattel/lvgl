@@ -148,7 +148,7 @@ static gd_GIF * gif_open(gd_GIF * gif_base)
         lv_color_t c = lv_color_make(*(bgcolor + 0), *(bgcolor + 1), *(bgcolor + 2));
         gif->canvas[i*3 + 0] = c.full & 0xff;
         gif->canvas[i*3 + 1] = (c.full >> 8) & 0xff;
-        gif->canvas[i*3 + 2] = 0xff;
+        gif->canvas[i*3 + 2] = 0x00;
 #elif LV_COLOR_DEPTH == 8
         lv_color_t c = lv_color_make(*(bgcolor + 0), *(bgcolor + 1), *(bgcolor + 2));
         gif->canvas[i*2 + 0] = c.full;
