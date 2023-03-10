@@ -406,12 +406,16 @@ static void obj_del_core(lv_obj_t * obj)
     }
     /*Remove the object from the child list of its parent*/
     else {
+        if (obj->parent->spec_attr->child_cnt == 0)
+            return;
+
         uint32_t id = lv_obj_get_index(obj);
         uint32_t i;
         for(i = id; i < obj->parent->spec_attr->child_cnt - 1; i++) {
             obj->parent->spec_attr->children[i] = obj->parent->spec_attr->children[i + 1];
         }
-        obj->parent->spec_attr->child_cnt--;
+        if (obj->parent->spec_attr->child_cnt)
+            obj->parent->spec_attr->child_cnt--;
         obj->parent->spec_attr->children = lv_mem_realloc(obj->parent->spec_attr->children,
                                                           obj->parent->spec_attr->child_cnt * sizeof(lv_obj_t *));
     }
