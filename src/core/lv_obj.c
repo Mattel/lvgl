@@ -295,10 +295,16 @@ void lv_obj_clear_state(lv_obj_t * obj, lv_state_t state)
 /*=======================
  * Getter functions
  *======================*/
-
+#include "stdio.h"
 bool lv_obj_has_flag(const lv_obj_t * obj, lv_obj_flag_t f)
 {
     LV_ASSERT_OBJ(obj, MY_CLASS);
+
+    // HACK: if address not in external ram, return NULL
+    if (obj < 0x3D000000 + 0x10 || obj > 0x3E000000 - 0x10) {
+        printf("%s: OBJ OUT OF RANGE\n", __func__);
+        return NULL;
+    }
 
     return (obj->flags & f)  == f ? true : false;
 }

@@ -7,6 +7,7 @@
  *      INCLUDES
  *********************/
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "lv_obj.h"
 #include "lv_indev.h"
@@ -273,6 +274,12 @@ lv_disp_t * lv_obj_get_disp(const lv_obj_t * obj)
 
     const lv_obj_t * scr;
 
+    // HACK: if address not in external ram, return NULL
+    if (obj < 0x3D000000 + 0x10 || obj > 0x3E000000 - 0x10) {
+        printf("%s: OBJ OUT OF RANGE\n", __func__);
+        return NULL;
+    }
+
     if(obj->parent == NULL) scr = obj;  /*`obj` is a screen*/
     else scr = lv_obj_get_screen(obj);  /*get the screen of `obj`*/
 
@@ -293,7 +300,16 @@ lv_obj_t * lv_obj_get_parent(const lv_obj_t * obj)
     if(obj == NULL) return NULL;
     LV_ASSERT_OBJ(obj, MY_CLASS);
 
-    return obj->parent;
+    // HACK: if address not in external ram, return NULL
+    if (obj < 0x3D000000 + 0x10 || obj > 0x3E000000 - 0x10) {
+        printf("%s: OBJ OUT OF RANGE\n", __func__);
+        return NULL;
+    }
+
+    if (obj)
+        return obj->parent;
+    else
+        return NULL;
 }
 
 lv_obj_t * lv_obj_get_child(const lv_obj_t * obj, int32_t id)
@@ -406,6 +422,12 @@ static void obj_del_core(lv_obj_t * obj)
     }
     /*Remove the object from the child list of its parent*/
     else {
+        // HACK: if address not in external ram, return NULL
+        if (obj < 0x3D000000 + 0x10 || obj > 0x3E000000 - 0x10) {
+            printf("%s: OBJ OUT OF RANGE\n", __func__);
+            return;
+        }
+
         if (obj->parent->spec_attr->child_cnt == 0)
             return;
 

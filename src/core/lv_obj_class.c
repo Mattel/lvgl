@@ -130,9 +130,15 @@ void lv_obj_class_init_obj(lv_obj_t * obj)
         lv_obj_invalidate(obj);
     }
 }
-
+#include "stdio.h"
 void _lv_obj_destruct(lv_obj_t * obj)
 {
+    // HACK: if address not in external ram, return NULL
+    if (obj < 0x3D000000 + 0x10 || obj > 0x3E000000 - 0x10) {
+        printf("%s: OBJ OUT OF RANGE\n", __func__);
+        return;
+    }
+
     if(obj->class_p->destructor_cb) obj->class_p->destructor_cb(obj->class_p, obj);
 
     if(obj->class_p->base_class) {

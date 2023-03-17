@@ -48,7 +48,7 @@ static lv_event_t * event_head;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-
+#include "stdio.h"
 lv_res_t lv_event_send(lv_obj_t * obj, lv_event_code_t event_code, void * param)
 {
     if(obj == NULL) return LV_RES_OK;
@@ -151,6 +151,12 @@ uint32_t lv_event_register_id(void)
 void _lv_event_mark_deleted(lv_obj_t * obj)
 {
     lv_event_t * e = event_head;
+
+    // HACK: if address not in external ram, return NULL
+    if (obj < 0x3D000000 + 0x10 || obj > 0x3E000000 - 0x10) {
+        printf("%s: OBJ OUT OF RANGE\n", __func__);
+        return;
+    }
 
     while(e) {
         if(e->current_target == obj || e->target == obj) e->deleted = 1;
